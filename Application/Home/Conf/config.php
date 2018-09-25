@@ -13,5 +13,6 @@ return array(
     'TMPL_L_DELIM' => '{<',
     'TMPL_R_DELIM' => '>}',
     'URL_CASE_INSENSITIVE' => true,  // URL区分大小写 //
-    'SESSION_AUTO_START'   =>  true  //开启session
+    'SESSION_AUTO_START'   =>  true,  //开启session
+    // 'USER_AUTH_GATEWAY'    =>'/Home/Login/login',// 默认认证网关
 );
