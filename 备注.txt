@@ -1,0 +1,2 @@
+1、图片上传功能
+    (1)如果域名更改了，需要在Public/ueditor-php/php/config.json 文件中手动修改地址前缀配置

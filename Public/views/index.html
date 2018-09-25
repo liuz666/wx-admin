@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台-题目管理</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+    <link href="//cdn.bootcss.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/Public/css/admin.css">
+    <link rel="stylesheet" href="/Public/vendor/select2/select2.min.css">
+</head>
+<body >
+    <div id="app">
+        <header id="header">
+            <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">后台-管理</a>
+                    </div>
+                    <div id="navbar" class="navbar-collapse collapse">
+                        <ul class="nav navbar-nav">
+                            <li><router-link to="/score"><i class="glyphicon glyphicon-star"></i> 成绩概览</router-link></li>
+                            <li><router-link to="/home"><i class="glyphicon glyphicon-pencil"></i>题目列表</router-link></li>
+                            <li><router-link to="/news"><i class="glyphicon glyphicon-align-justify"></i> 消息列表</router-link></li>
+                            <li><router-link to="/userList"><i class="glyphicon glyphicon-user"></i> 用户列表</router-link></li>
+                            <li><router-link to="/set"><i class="glyphicon glyphicon-cog"></i> 功能设置</router-link></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right" style="margin-right:15px;">
+                            <a href="/index.php/Home/Login/logout">
+                                <button type="button" class="btn btn-danger btn-sm navbar-btn">退出登录</button>
+                            </a>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <section id="content">
+            <router-view></router-view>
+        </section>
+    </div>
+    
+    <script src="/Public/js/jquery.min.js"></script>
+    <script src="/Public/js/vue.js"></script>
+    <script src="/Public/js/vue-router.js"></script>
+    <script src="/Public/js/index.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="/Public/js/admin.js"></script>
+    <script src="/Public/vendor/ueditor-php/ueditor.config.js"></script>
+    <script src="/Public/vendor/ueditor-php/ueditor.all.js"></script>
+    <script src="/Public/vendor/ueditor-php/lang/zh-cn/zh-cn.js"></script>
+    
+
+</body>
+</html>
