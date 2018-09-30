@@ -2,8 +2,9 @@
 namespace Home\Controller;
 
 use Think\Controller;
+header("Access-Control-Allow-Origin: *");//解决跨域问题
+header('Access-Control-Allow-Methods:*'); 
 class AdminController extends CommonController{
-    
     public function show_question(){
         $page = I('get.page',1);
         $limit = I('get.limit',10);
