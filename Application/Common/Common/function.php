@@ -1,5 +1,5 @@
 <?php
-/*导出excel功能*/
+/*导出excel模板功能*/
 function export_excel($expTitle, $expCellName, $expTableData, $fileName = '',$subtitle=''){
     // var_dump($expTitle);die();
     import("Org.Util.PHPExcel");
@@ -56,8 +56,45 @@ function export_excel($expTitle, $expCellName, $expTableData, $fileName = '',$su
     header("Pragma:no-cache"); 
 
     $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel5');
+    // var_dump($objWriter);die();
     $objWriter->save('php://output');
     exit;
+}
+/**
+ * @method 把excel文件的内容对人数组
+ * @staticvar $filePath 文件路径
+ * @return type array $data 数组
+ */
+function format_excel2array($filePath = '', $sheet = 0){
+    import("Org.Util.PHPExcel");
+    import("Org.Util.PHPExcel.Writer.Excel5");
+    import("Org.Util.PHPExcel.IOFactory.php");
+    if (empty($filePath) or !file_exists($filePath)) {
+        die('file not exists');
+    }
+    $PHPReader = new PHPExcel_Reader_Excel2007();        //建立reader对象
+    if (!$PHPReader->canRead($filePath)) {
+        $PHPReader = new PHPExcel_Reader_Excel5();
+        if (!$PHPReader->canRead($filePath)) {
+            return 'no Excel';
+        }
+    }
+    $PHPExcel = $PHPReader->load($filePath);        //建立excel对象
+    $currentSheet = $PHPExcel->getSheet($sheet);        //**读取excel文件中的指定工作表*/
+    $allColumn = $currentSheet->getHighestColumn();        //**取得最大的列号*/
+    $allRow = $currentSheet->getHighestRow();        //**取得一共有多少行*/
+    $data = array();
+    for ($rowIndex = 1; $rowIndex <= $allRow; $rowIndex++) {        //循环读取每个单元格的内容。注意行从1开始，列从A开始
+        for ($colIndex = 'A'; $colIndex <= $allColumn; $colIndex++) {
+            $addr = $colIndex . $rowIndex;
+            $cell = $currentSheet->getCell($addr)->getValue();
+            if ($cell instanceof PHPExcel_RichText) { //富文本转换字符串
+                $cell = $cell->__toString();
+            }
+            $data[$rowIndex][$colIndex] = $cell;
+        }
+    }
+    return $data;
 }
 function filter_col($col_str, $tab_name){
     $col = explode(",", $col_str);
@@ -69,4 +106,79 @@ function filter_col($col_str, $tab_name){
         }
     }
     return $res;
+}
+/**
+ * @method 去除字符串首尾处的
+ * @staticvar array/string $array
+ * @return type array/string $array
+ */
+function trim_array($array)
+{
+    if (is_array($array)) {
+        array_walk_recursive($array, '_trim_');
+    } else {
+        $array = trim($array);
+    }
+    return $array;
+}
+/**
+ * @method 去除数组的空值
+ * @staticvar array/string $array
+ * @return type array/string $array
+ */
+function array_del_empty($array)
+{
+    if (is_array($array)) {
+        foreach ($array as $k => $v) {
+            if (empty($v)) unset($array[$k]);
+            elseif (is_array($v)) {
+                $array[$k] = array_del_empty($v);
+            }
+        }
+    }
+    return $array;
+}
+//创建目录
+function mkdirs($dir, $mode = 0777)
+{
+    if (is_dir($dir) || @mkdir($dir, $mode)) return TRUE;
+    if (!mkdirs(dirname($dir), $mode)) return FALSE;
+    return @mkdir($dir, $mode);
+}
+//搜索字符串解码
+function search_decode($search) {
+    $str=str_replace(" ", "+",$search);
+    $json_data = json_decode(base64_decode($str),true );
+    return $json_data;
+}
+function create_xls($data=array(),$filename='score.xls'){
+    ini_set('max_execution_time', '0');
+    // Vendor('PHPExcel.PHPExcel');
+    import("Org.Util.PHPExcel");
+    import("Org.Util.PHPExcel.Writer.Excel5");
+    import("Org.Util.PHPExcel.IOFactory.php");
+    $filename=str_replace('.xls', '', $filename).'.xls';
+    $phpexcel = new \PHPExcel();
+    $phpexcel->getProperties()
+             ->setCreator("Maarten Balliauw")
+             ->setLastModifiedBy("Maarten Balliauw")
+             ->setTitle("Office 2007 XLSX Test Document")
+             ->setSubject("Office 2007 XLSX Test Document")
+             ->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
+             ->setKeywords("office 2007 openxml php")
+             ->setCategory("Test result file");
+    $phpexcel->getActiveSheet()->fromArray($data);
+    $phpexcel->getActiveSheet()->setTitle('Sheet1');
+    $phpexcel->setActiveSheetIndex(0);
+    header('Content-Type: application/vnd.ms-excel');
+    header("Content-Disposition: attachment;filename=$filename");
+    header('Cache-Control: max-age=0');
+    header('Cache-Control: max-age=1');
+    header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+    header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
+    header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+    header ('Pragma: public'); // HTTP/1.0
+    $objwriter = PHPExcel_IOFactory::createWriter($phpexcel, 'Excel5');
+    $objwriter->save('php://output');
+    exit;
 }
